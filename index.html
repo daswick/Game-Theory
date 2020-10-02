@@ -26,48 +26,48 @@
 	</p>
 	<p>
 		This game is called the <a href="https://en.wikipedia.org/wiki/Prisoner's_dilemma"target="_blank">Prisoner's Dilemma</a> and is one of the most studied games in game theory.
-		Two members of a gang have been arrested and are set to go on trial.
+		Two members of a gang, let's call them Alex and Bob, have been arrested and are set to go on trial.
 		The prosecutors have enough evidence to convict both of the prisoners on a minor charge, but they suspect the prisoners committed a larger crime.
-		Both prisoners are separated and interrogated, given the choice to either "confess" or "deny" their involvement in the larger crime.
-		If both prisoners confess, they each serve two years in prison.
-		If only one prisoner confesses and the other denies, the prisoner that confesses will get three years while the denier gets zero.
-		And if both prisoners deny, both are sentenced one year each on just the minor charges.
+		Both prisoners are separated and interrogated, and while the prisoners refuse to admit their own involvement, they can either "testify" against the other prisoner or "deny" their involvement as well.
+		If both prisoners testify, they each serve 5 years in prison.
+		If only one prisoner testifies and the other denies, the prisoner that testifies will be set free and the denier gets 8 years.
+		And if both prisoners deny, both are sentenced 2 years each on just the minor charges.
 		This can be represented by this table:
 	</p>
 	<center>
 		<table>
 			<tr>
 				<td></td>
-				<td>Confess</td>
-				<td>Deny</td>
+				<td>Bob Testify</td>
+				<td>Bob Deny</td>
 			</tr>
 			<tr>
-				<td>Confess</td>
-				<td>-1, -1</td>
-				<td>-3, 0</td>
+				<td>Alex Testify</td>
+				<td>A = -5, B = -5</td>
+				<td>A = 0, B = -8</td>
 			</tr>
 			<tr>
-				<td>Deny</td>
-				<td>0, -3</td>
-				<td>-2, -2</td>
+				<td>Alex Deny</td>
+				<td>A = -8, B = 0</td>
+				<td>A = -2, B = -2</td>
 			</tr>
 		</table>
 	</center>
 	<p>
 		Now what can we observe from this?
-		For starters, we can all agree that both prisoners denying would objectively be the worst outcome.
-		At the same time, we know that if both prisoners were playing in their own interest, both of them would end up choosing to deny.
+		For starters, we can all agree that both prisoners testifying would objectively be the worst outcome.
+		At the same time, we know that if both prisoners were playing in their own interest, both of them would end up choosing to testify.
 		So why is that?
 	</p>
 	<p>
 		Think about it like this.
-		No matter what prisoner one chooses, prisoner two has no idea what was chosen and will always have the same choices.
-		If prisoner one confesses, then prisoner two gets a payoff of -1 if they confess and 0 if they deny.
-		If prisoner one denies, prisoner two gets a payoff of -3 if they confess and -2 if they deny.
-		Regardless of what prisoner one chooses to do, we see that denying gets a better payoff for prisoner two.
-		Similarly, prisoner one knows that no matter what prisoner two does, denying nets a better result for prisoner one.
+		No matter what Alex chooses, Bob has no idea what was chosen and will always have the same choices.
+		If Alex testifies, then Bob gets a payoff of -5 if they testify and -10 if they deny.
+		If Alex denies, Bob gets a payoff of 0 if they testify and -2 if they deny.
+		Regardless of what Alex chooses to do, we see that testifying gets a better payoff for Bob.
+		Similarly, Alex knows that no matter what Bob does, testifying nets a better result for Alex.
 		This is what makes this game a "dilemma."
-		The mathematically best outcome is both prisoners confessing, but the mathematically best strategy is both prisoners denying.
+		The mathematically best outcome is both prisoners denying (since it adds up to the lowest amount of years served in prison), but the mathematically best strategy is both prisoners testifying.
 		This is just one of many fascinating games covered in game theory.
 	</p>
 </body>
