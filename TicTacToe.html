@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Tic Tac Toe</title>
+<style>
+	html, body {
+		height: 100%;
+	}
+	body {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 0;
+		background-color: gray;
+		font-size: 24px;
+	}
+	button {
+		font-size: 24px;
+		box-shadow: 1px 1px #555555;
+	}
+	.container {
+		width: 40%;
+		height: 75%;
+		background-color: white;
+		border-radius: 3px;
+		box-shadow: 3px 3px 5px 5px #444444;
+	}
+	.container > div {
+		display: flex;
+		justify-content: center;
+	}
+	.game-board {
+		margin-top: 20px;
+		margin-bottom: 36px;
+	}
+	.game-column:not(:last-child) {
+		border-right: 2px solid black;
+	}
+	.game-column > .game-tile:not(:last-child) {
+		border-bottom: 2px solid black;
+	}
+	.game-tile {
+		padding: 10px;
+		width: 75px;
+		height: 75px;
+		text-align: center;
+		font-size: 60px;
+		background-color: #f0f0f0;
+	}
+	.game-tile:hover {
+		background-color: #bbbbbb;
+		transition: 0.5s;
+	}
+</style>
+</head>
+<body>
+	<div class='container'>
+		<div class='game-info'>
+			<p id='game-status'>The AI will let you go first</p>
+		</div>
+		<div class='game-board'>
+			<div class='game-column'>
+				<div class='game-tile' id='tile-top-left'>
+				</div>
+				<div class='game-tile' id='tile-mid-left'>
+				</div>
+				<div class='game-tile' id='tile-bot-left'>
+				</div>
+			</div>
+			<div class='game-column'>
+				<div class='game-tile' id='tile-top-mid'>
+				</div>
+				<div class='game-tile' id='tile-mid-mid'>
+				</div>
+				<div class='game-tile' id='tile-bot-mid'>
+				</div>
+			</div>
+			<div class='game-column'>
+				<div class='game-tile' id='tile-top-right'>
+				</div>
+				<div class='game-tile' id='tile-mid-right'>
+				</div>
+				<div class='game-tile' id='tile-bot-right'>
+				</div>
+			</div>
+		</div>
+		<div class='game-buttons'>
+			<button id='reset-button'>Reset Game</button>
+		</div>
+	</div>
+	
+	<script>
+		var tileIds = ['tile-top-left', 'tile-mid-left', 'tile-bot-left', 'tile-top-mid', 'tile-mid-mid', 'tile-bot-mid', 'tile-top-right', 'tile-mid-right', 'tile-bot-right'];
+		var gameStatusDiv = document.getElementById("game-status");
+		var tiles = document.getElementsByClassName("game-tile");
+
+		class TicTacToe {
+			constructor() {
+				this.isGameOngoing = true;
+				this.isPlayerTurn = true;
+				
+				this.playerMove = "X";
+				this.aiMove = "O";
+				this.emptySpot = " ";
+				this.gridSize = 9;
+				this.grid = [];
+				
+				for (var i = 0; i < this.gridSize; i++) {
+					this.grid.push(this.emptySpot);
+				}
+			}
+			doPlayerMove(tileIndex) {
+				// Check if player is able to move at all
+				if (!this.isGameOngoing || !this.isPlayerTurn) {
+					return;
+				}
+					
+				// Check if player is able to move to specific spot
+				if (this.grid[tileIndex] != this.emptySpot) {
+					return;
+				}
+				
+				console.log("Player moving to tile " + tileIndex);
+				// Mark tile as player move
+				document.getElementById(tileIds[tileIndex]).textContent = this.playerMove;
+				this.grid[tileIndex] = this.playerMove;
+				this.isPlayerTurn = false;
+				
+				// Update game status text
+				var textContent = "";
+				if (this.checkForWin() != this.emptySpot) {
+					this.isGameOngoing = false;
+					textContent = "You'll never see this, but you won!";
+				} else if (this.checkFullBoard()) {
+					this.isGameOngoing = false;
+					textContent = "You tied! No surprise there.";
+				} else {
+					textContent = "The AI is thinking about it's next move...";
+				}
+				gameStatusDiv.textContent = textContent;
+			}
+			doAiMove() {
+				// Check if AI is able to move at all
+				if (!this.isGameOngoing || this.isPlayerTurn) {
+					return;
+				}
+
+				// Determine best move
+				var results = this.minimax(this.gridSize, true);
+				var bestScore = results[0];
+				var bestMove = results[1];
+				console.log("AI deemed tile " + bestMove + " to be the best move with a score of " + bestScore);
+					
+				// Mark tile as AI move
+				document.getElementById(tileIds[bestMove]).textContent = this.aiMove;
+				this.grid[bestMove] = this.aiMove;
+				this.isPlayerTurn = true;
+					
+				// Update game status text
+				var textContent = "";
+				if (this.checkForWin() != this.emptySpot) {
+					this.isGameOngoing = false;
+					textContent = "The AI won! Who would have guessed?";
+				} else if (this.checkFullBoard()) {
+					this.isGameOngoing = false;
+					textContent = "Hey, at least you tied!";
+				} else {
+					textContent = "It's your move now. Try not to let it win!";
+				}
+				gameStatusDiv.textContent = textContent;
+			}
+			minimax(depth, isAiTurn) {
+				var winner = this.checkForWin();
+
+				if (winner == this.aiMove) {
+					return [(depth + 10), 0];
+				} else if (winner == this.playerMove) {					
+					return [(-depth - 10), 0];
+				} else if (this.checkFullBoard()) {
+					return [0, 0];
+				}
+					
+				var bestMove = -1;
+				var bestScore = isAiTurn ? -1000000 : 1000000;
+				
+				for (var tileIndex = 0; tileIndex < this.gridSize; tileIndex++) {
+					if (this.grid[tileIndex] == this.emptySpot) {
+						this.grid[tileIndex] = isAiTurn ? this.aiMove : this.playerMove;
+						var possibleScore = this.minimax(depth - 1, !isAiTurn)[0];
+						this.grid[tileIndex] = this.emptySpot;
+						
+						if (isAiTurn && possibleScore > bestScore) {
+							bestScore = possibleScore;
+							bestMove = tileIndex;
+						} else if (!isAiTurn && possibleScore < bestScore) {
+							bestScore = possibleScore;
+							bestMove = tileIndex;						
+						}
+					}
+				}
+				return [bestScore, bestMove];			
+			}
+			checkForWin() {
+				var winConditions = [
+					[this.grid[0], this.grid[1], this.grid[2]], // Column 1
+					[this.grid[3], this.grid[4], this.grid[5]], // Column 2
+					[this.grid[6], this.grid[7], this.grid[8]], // Column 3
+					[this.grid[0], this.grid[3], this.grid[6]], // Row 1
+					[this.grid[1], this.grid[4], this.grid[7]], // Row 2
+					[this.grid[2], this.grid[5], this.grid[8]], // Row 3
+					[this.grid[0], this.grid[4], this.grid[8]], // Diagonal 1
+					[this.grid[2], this.grid[4], this.grid[6]]  // Diagonal 2
+				]
+				
+				// Check each possible win condition for both players
+				for (var winCondition of winConditions) {
+					if (winCondition[0] == this.playerMove && winCondition[1] == this.playerMove && winCondition[2] == this.playerMove) {
+						return this.playerMove;
+					}
+					else if (winCondition[0] == this.aiMove && winCondition[1] == this.aiMove && winCondition[2] == this.aiMove) {
+						return this.aiMove;
+					}
+				}
+				
+				// No one has won yet, so empty spot indicates game is still up for grabs
+				return this.emptySpot;
+			}
+			checkFullBoard() {
+				// Check if any tile is empty
+				for (var tile of this.grid) {
+					if (tile == this.emptySpot) {
+						return false;
+					}
+				}
+				return true;
+			}
+			reset() {
+				gameStatusDiv.textContent = "I see you had to reset. The first move is yours.";
+				this.isGameOngoing = true;
+				this.isPlayerTurn = true;
+				for (var tileIndex = 0; tileIndex < tiles.length; tileIndex++) {
+					tiles[tileIndex].textContent = this.emptySpot;
+					this.grid[tileIndex] = this.emptySpot;
+				}			
+			}
+		}
+		
+		var game = new TicTacToe();
+		
+		for (var tileIndex = 0; tileIndex < tiles.length; tileIndex++ ) {
+			tiles[tileIndex].onclick = async function(event) {
+				game.doPlayerMove(this);
+				await new Promise(resolve => setTimeout(resolve, 50));
+				game.doAiMove();
+			}.bind(tileIndex);
+		}
+		
+		document.getElementById("reset-button").onclick = function() { game.reset(); };
+	</script>	
+</body>
+</html>
